@@ -91,7 +91,7 @@ class JointPostProcess(nn.Module):
             packed_input = packed_input.to(self.device)
 
         if self.window > 1:
-            packed_input = self.create_windows(packed_input, window_len=self.window)
+            packed_input = self.create_win5(packed_input, window_len=self.window)
         
         #Feed-forward GRU
         gru_outputs, _ = self.gru(packed_input, h0)
