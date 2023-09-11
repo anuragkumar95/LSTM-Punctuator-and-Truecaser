@@ -4,12 +4,8 @@ Created on Sat Sept 9th 2023
 @author: Anurag Kumar
 """
 
-import torch
 from tqdm import tqdm
 import os
-import numpy as np
-import json
-from utils import collate, switch_smoothing
 from torch.utils.data import Dataset
 
 
@@ -24,8 +20,8 @@ class Post_Processing_Dataset(Dataset):
         ARGS:
             root : (str) path to the root dir containing files.
             tokenizer : (model) instance to the tokenizer.
-            punc_labels : (List[int]) punctuation labels.
-            case_labels : (List[Int]) case labels.
+            punc_labels : (List[int]) punctuation labels map.
+            case_labels : (List[Int]) case labels map.
         """
         print(f"Initialising Punctuation and Case restoration Dataset from {root}...")
         self.tokenizer = tokenizer

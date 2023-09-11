@@ -59,12 +59,8 @@ def args():
                         help="Set this flag for gpu training.")
     parser.add_argument("--pt", type=str, required=False, default=None,
                         help="Continue training if path to saved checkpoint is provided.")
-    parser.add_argument("--mode", type=str, required=False, default='PP+QAC',
-                        help="Option (PP+QAC/PP)")
     parser.add_argument("--reset", action='store_true', required=False,
                         help="Reset training with new optimizer and scheduler with a saved checkpoint.")
-    parser.add_argument("--smooth", action='store_true', required=False,
-                        help="Smooth speaker switch labels.")
     return parser
 
 
@@ -312,6 +308,7 @@ def main(ARGS):
     CASE = {'LC':0,
             'UC':1,
             'CA':2}
+    
     PUNC = {',':0,
             '.':1,
             '?':2,

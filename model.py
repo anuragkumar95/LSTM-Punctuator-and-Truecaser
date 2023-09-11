@@ -115,25 +115,22 @@ class JointPostProcess(nn.Module):
             h0 = torch.zeros(inputs.shape[0], num_layers, self.hidden_dim).requires_grad_()
         h0 = self.init_hidden_state(h0)
         
-        if inputs.shape[1] <= 512:
-            encoded = self.encoder.extract_features(inputs)
-        else:
-            st = 0
-            encoded = None
-            while(st < inputs.shape[1]):
-                end = min(inputs.shape[1], st + 512)
-                part_inp = inputs[:, st:end]
-                part_enc = self.encoder.extract_features(part_inp)
-                if encoded is None:
-                    encoded = part_enc
-                else:
-                    encoded = torch.cat((encoded, part_enc), dim = 1)
-                st += 512  
+        st = 0
+        encoded = None
+        while(st < inputs.shape[1]):
+            end = min(inputs.shape[1], st + 512)
+            part_inp = inputs[:, st:end]
+            part_enc = self.encoder.extract_features(part_inp)
+            if encoded is None:
+                encoded = part_enc
+            else:
+                encoded = torch.cat((encoded, part_enc), dim = 1)
+            st += 512  
                 
         if self.window > 1:
             if self.window != 5:
                 raise NotImplementedError
-            encoded = self.create_windows(encoded, window_len=self.window)
+            encoded = self.create_win5(encoded, window_len=self.window)
         
         encoded = rnn.pack_padded_sequence(encoded, lens, batch_first=True, enforce_sorted=False)
         
