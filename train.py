@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 from model import JointPostProcess
 from dataset import Post_Processing_Dataset
-from utils import PuncCaseJointLoss, FocalLoss, freeze_layers, collate, score
+from utils import PuncCaseJointLoss, freeze_layers, collate, score
 
 import wandb
 
@@ -40,15 +40,15 @@ def args():
     parser.add_argument("--batchsize", type=int, required=False, default=4,
                         help="Training batchsize.")
     parser.add_argument("--embedding_dim", type=int, required=False, default=1024,
-                        help="Speaker embedding dimension.")
+                        help="Roberta embedding dimension.")
     parser.add_argument("--hidden_dim", type=int, required=False, default=128,
-                        help="Speaker embedding dimension.")
+                        help="hidden dimension for rnn layers.")
     parser.add_argument("--num_layers", type=int, required=False, default=3,
-                        help="Speaker embedding dimension.")
+                        help="Number of layers for RNN.")
     parser.add_argument("--max_len", type=int, required=False, default=3,
-                        help="Speaker embedding dimension.")
+                        help="Maximum input sequence length. Sequences longer than this are truncated.")
     parser.add_argument("--jump", type=int, required=False, default=3,
-                        help="Speaker embedding dimension.")
+                        help="How much to overlap between sequences.")
     parser.add_argument("--print_freq", type=int, required=False, default=3,
                         help="Logging frequency.")
     parser.add_argument("--accum_grad", type=int, required=False, default=1,
@@ -312,7 +312,8 @@ def main(ARGS):
     PUNC = {',':0,
             '.':1,
             '?':2,
-            'NA':3}
+            '!':3,
+            'NA':4}
     
     roberta = RobertaModel.from_pretrained(ARGS.ckpt, checkpoint_file='model.pt')
 
@@ -359,6 +360,7 @@ def main(ARGS):
     #Freeze embedding layer of the model
     model = freeze_layers(model, ['encoder'])
     criterion = PuncCaseJointLoss(device=device, loss='CE')
+    #criterion = PuncCaseJointLoss(device=device, loss='Focal')
     
     #Set optimizer and lr scheduler
     optimizer = torch.optim.Adam(filter(lambda layer:layer.requires_grad,

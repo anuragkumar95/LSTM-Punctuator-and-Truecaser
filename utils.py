@@ -146,18 +146,17 @@ def pre_process(text):
     return text
 
 class NLP:
-    def __init__(self, string, speaker_labels=None, QAC_labels=None):
+    def __init__(self, string, speaker_labels=None):
         self.headers = ['id',
                         'word',
                         'pre-punct',
                         'post-punct',
                         'case',
-                        'QAC',
                         'speaker']
 
-        self.data = self.read(string, speaker_labels, QAC_labels)
+        self.data = self.read(string, speaker_labels)
         
-    def read(self, string, speakers=None, QAC_labels = None):
+    def readTXT(self, string, speakers=None):
         words = string.split()
         data = []
         for i, word in enumerate(words):
@@ -199,13 +198,9 @@ class NLP:
             for word, spk in zip(data, speakers):
                 word['speaker'] = spk  
         
-        if QAC_labels is not None:   
-            assert len(QAC_labels) == len(data), f"Len of QAC labels:{len(QAC_labels)} do not match len of data:{len(data)}"
-            for word, qac in zip(data, QAC_labels):
-                word['QAC'] = qac  
         return data
     
-    def export(self, path):
+    def exportNLP(self, path):
         with open(path, 'w') as f:
             f.write(f"{'|'.join(self.headers)}\n")
             for attr in self.data:
@@ -214,6 +209,19 @@ class NLP:
                     line.append(str(attr[header]))
                 line = "|".join(line)
                 f.write(f"{line}\n")
+
+
+def nlp2txt(fp, savepath):
+    """
+    ARGS:
+        fp       : pointer to the NLP file.
+        savepath : path where the text file should be saved.
+    """
+    lines = fp.readlines()
+    for line in tqdm(fp.readlines()):
+        line = line.split('|')
+        word = line[0]
+
 
 def freeze_layers(model, layers):
     """

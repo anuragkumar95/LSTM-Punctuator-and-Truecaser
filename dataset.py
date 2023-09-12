@@ -37,9 +37,10 @@ class Post_Processing_Dataset(Dataset):
                         ('-',' '),
                         ('[',''),
                         (']',''),
-                        ('..','.'),
+                        ('..',''),
                         ('-',' '),
-                        ('_',' ')]
+                        ('_',' '),
+                        ('...', '')]
         
         paths = [os.path.join(root, path) for path in os.listdir(root)]
         self.data = self.parse_files(paths)
@@ -73,7 +74,7 @@ class Post_Processing_Dataset(Dataset):
 
                 #store punct labels on word level
                 punct = word[-1]
-                if punct not in ['.', ',', '?']:
+                if punct not in ['.', ',', '?', '!']:
                     punct = 'NA'
                 if punct != 'NA':
                     word = word[:-1]
